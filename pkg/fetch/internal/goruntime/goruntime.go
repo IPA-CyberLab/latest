@@ -8,7 +8,10 @@ import (
 	"net/http"
 	"regexp"
 	"sort"
+	"time"
 
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/zap"
 
 	ferrors "github.com/IPA-CyberLab/latest/pkg/fetch/internal/errors"
@@ -17,9 +20,22 @@ import (
 	"github.com/IPA-CyberLab/latest/pkg/releases"
 )
 
+var secondsHistogram = promauto.NewHistogram(prometheus.HistogramOpts{
+	Namespace: "latest",
+	Subsystem: "goruntime",
+	Name:      "duration_seconds",
+
+	Help: "Seconds took to fetch golang releases json.",
+})
+
 const endpoint = "https://golang.org/dl/?mode=json&include=all"
 
 func getJson(ctx context.Context) ([]byte, error) {
+	start := time.Now()
+	defer func() {
+		secondsHistogram.Observe(time.Since(start).Seconds())
+	}()
+
 	hc := httpcli.HttpClient
 
 	req, err := http.NewRequestWithContext((ctx), "GET", endpoint, nil)

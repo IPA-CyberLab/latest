@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -26,8 +27,20 @@ var apiResultTotal = promauto.NewCounterVec(prometheus.CounterOpts{
 	Name:      "queries_total",
 	Help:      "Total number of the GitHub API queried by its result status code.",
 }, []string{"status"})
+var apiSecondsHistogram = promauto.NewHistogram(prometheus.HistogramOpts{
+	Namespace: "latest",
+	Subsystem: "github",
+	Name:      "duration_seconds",
+
+	Help: "Seconds took to process GitHub API call.",
+})
 
 func githubHttpGet(ctx context.Context, url string) ([]byte, error) {
+	start := time.Now()
+	defer func() {
+		apiSecondsHistogram.Observe(time.Since(start).Seconds())
+	}()
+
 	l := zap.S()
 	l.Debugf("github API call: %v", url)
 
