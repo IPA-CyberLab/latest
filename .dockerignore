@@ -1,0 +1,7 @@
+.git
+.github
+.goreleaser.yml
+/docs
+renovate.json
+LICENSE
+README.md
