@@ -2,6 +2,7 @@ before:
   hooks:
     # - go mod tidy
     # - go generate ./...
+
 builds:
 - main: ./cmd/latest/main.go
 
@@ -37,3 +38,20 @@ snapshot:
 
 changelog:
   sort: asc
+
+dockers:
+- goos: linux
+  goarch: amd64
+  goarm: ''
+  binaries:
+  - latest
+
+  image_templates:
+  - "ghcr.io/ipa-cyberlab/kmgm-issuer:latest"
+
+  skip_push: false
+  dockerfile: Dockerfile
+  build_flag_templates:
+  - "--label=org.label-schema.schema-version=1.0"
+  - "--label=org.label-schema.version={{.Version}}"
+  - "--label=org.label-schema.name={{.ProjectName}}"
