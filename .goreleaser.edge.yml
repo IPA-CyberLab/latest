@@ -3,6 +3,9 @@ before:
     # - go mod tidy
     # - go generate ./...
 
+release:
+  disable: true
+
 builds:
 - main: ./cmd/latest/main.go
 
@@ -11,11 +14,9 @@ builds:
 
   goarch:
   - amd64
-  - arm64
 
   goos:
   - linux
-  - darwin
 
   ldflags:
   - -s -w
@@ -23,21 +24,8 @@ builds:
   - -X github.com/IPA-CyberLab/latest/version.Commit={{.Commit}}
   # - -X main.date={{.Date}} -X main.builtBy=goreleaser
 
-archives:
-- replacements:
-    darwin: Darwin
-    linux: Linux
-    386: i386
-    amd64: x86_64
-
-checksum:
-  name_template: 'checksums.txt'
-
 snapshot:
   name_template: "{{ .Tag }}-next"
-
-changelog:
-  sort: asc
 
 dockers:
 - goos: linux
@@ -47,9 +35,7 @@ dockers:
   - latest
 
   image_templates:
-  - "ghcr.io/ipa-cyberlab/latest:latest"
-  - "ghcr.io/ipa-cyberlab/latest:v{{ .Major }}"
-  - "ghcr.io/ipa-cyberlab/latest:v{{ .Major }}.{{ .Minor }}"
+  - "ghcr.io/ipa-cyberlab/latest:edge"
 
   skip_push: false
   dockerfile: Dockerfile
