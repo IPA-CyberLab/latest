@@ -4,9 +4,7 @@ before:
     # - go generate ./...
 
 release:
-  name_template: "edge"
-  prerelease: true
-  draft: true
+  disable: true
 
 builds:
 - main: ./cmd/latest/main.go
@@ -16,11 +14,9 @@ builds:
 
   goarch:
   - amd64
-  - arm64
 
   goos:
   - linux
-  - darwin
 
   ldflags:
   - -s -w
@@ -41,7 +37,7 @@ dockers:
   image_templates:
   - "ghcr.io/ipa-cyberlab/latest:edge"
 
-  skip_push: false
+  skip_push: true
   dockerfile: Dockerfile
   build_flag_templates:
   - "--label=org.label-schema.schema-version=1.0"

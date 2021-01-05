@@ -40,6 +40,8 @@ jobs:
           args: release -f .goreleaser.edge.yml --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: forsh push image
+        run: docker push ghcr.io/ipa-cyberlab/latest:edge
   release:
     needs: [unit_tests]
     if: contains(github.ref, 'tags/v')
