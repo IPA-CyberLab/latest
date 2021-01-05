@@ -17,8 +17,7 @@ jobs:
       run: go test ./...
   docker_edge_release:
     needs: [unit_tests]
-    branches:
-    - main
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
