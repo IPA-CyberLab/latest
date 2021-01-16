@@ -4,20 +4,23 @@ import (
 	"context"
 	"time"
 
-	"github.com/IPA-CyberLab/latest/pkg/releases"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/zap"
+
+	"github.com/IPA-CyberLab/latest/pkg/releases"
 )
 
+type Backend interface {
+	Fetch(ctx context.Context, softwareId string) (rs releases.Releases, err error)
+}
+
 type cachedFetcher struct {
-	backend Fetcher
+	backend Backend
 	reqC    chan request
 }
 
-var _ = Fetcher(&cachedFetcher{})
-
-func NewCachedFetcher(backend Fetcher) Fetcher {
+func NewCachedFetcher(backend Backend) *cachedFetcher {
 	c := &cachedFetcher{
 		backend: backend,
 		reqC:    make(chan request),

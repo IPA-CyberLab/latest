@@ -2,14 +2,14 @@ package query
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
-	"strings"
 
-	"github.com/blang/semver/v4"
 	"github.com/urfave/cli/v2"
 
 	"github.com/IPA-CyberLab/latest/pkg/fetch"
+	"github.com/IPA-CyberLab/latest/pkg/parser"
 	"github.com/IPA-CyberLab/latest/pkg/releases"
 )
 
@@ -33,10 +33,6 @@ var Command = &cli.Command{
 	Usage: "Query a release of specified software",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
-			Name:  "range",
-			Usage: "semver `RANGE` to query from. See https://godoc.org/github.com/blang/semver/v4#ParseRange for the accepted syntax.",
-		},
-		&cli.StringFlag{
 			Name:  "asset",
 			Usage: "Output asset URL. `QUERY` can be \"all\" to output all found assets, or specify \"guess\" to guess the most suitable one.",
 			Value: "guess",
@@ -48,16 +44,6 @@ var Command = &cli.Command{
 		},
 	},
 	Action: func(c *cli.Context) error {
-		var vrange semver.Range
-		vrangestr := c.String("range")
-		if vrangestr != "" {
-			var err error
-			vrange, err = semver.ParseRange(vrangestr)
-			if err != nil {
-				return err
-			}
-		}
-
 		assetQ := AssetQueryNone
 		if c.IsSet("asset") {
 			s := c.String("asset")
@@ -84,16 +70,20 @@ var Command = &cli.Command{
 			}
 		}
 
-		softwareId := strings.TrimSpace(c.Args().First())
-		rs, err := fetch.Direct{}.Fetch(c.Context, softwareId)
+		q, err := parser.Parse(c.Args().First())
 		if err != nil {
 			return err
 		}
 
-		r, err := rs.Select(vrange)
+		fetcher := fetch.Direct{}
+		rs, err := q.Execute(c.Context, fetcher)
 		if err != nil {
 			return err
 		}
+		if len(rs) == 0 {
+			return errors.New("No release matched.")
+		}
+		r := rs[0]
 
 		if assetQ == AssetQueryNone && outputType != OutputTypeLine {
 			assetQ = AssetQueryGuess

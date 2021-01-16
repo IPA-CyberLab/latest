@@ -21,10 +21,6 @@ var fetchImpls = []func(ctx context.Context, softwareId string) (releases.Releas
 	github.Fetch,
 }
 
-type Fetcher interface {
-	Fetch(ctx context.Context, softwareId string) (rs releases.Releases, err error)
-}
-
 var directSecondsHistogram = promauto.NewHistogramVec(prometheus.HistogramOpts{
 	Namespace: "latest",
 	Subsystem: "direct_fetcher",

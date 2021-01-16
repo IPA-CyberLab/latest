@@ -17,6 +17,7 @@ import (
 
 	ferrors "github.com/IPA-CyberLab/latest/pkg/fetch/internal/errors"
 	"github.com/IPA-CyberLab/latest/pkg/fetch/internal/httpcli"
+	"github.com/IPA-CyberLab/latest/pkg/fetch/internal/scrapeutil"
 	"github.com/IPA-CyberLab/latest/pkg/parser"
 	"github.com/IPA-CyberLab/latest/pkg/releases"
 )
@@ -135,7 +136,7 @@ func Fetch(ctx context.Context, softwareId string) (releases.Releases, error) {
 		}
 		// l.Debugf("Parse version from release name %q tagname %q -> %v", rawr.TagName, rawr.Name, r.Version)
 
-		r.AssetURLs = parser.ScrapeLinks(rawr.Body)
+		r.AssetURLs = scrapeutil.ScrapeLinks(rawr.Body)
 		for _, a := range rawr.Assets {
 			r.AssetURLs = append(r.AssetURLs, a.BrowserDownloadURL)
 		}

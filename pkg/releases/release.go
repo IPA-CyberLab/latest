@@ -46,6 +46,19 @@ func (rs Releases) Select(vrange semver.Range) (Release, error) {
 	return Release{}, NotFoundErr
 }
 
+func (rs Releases) RemovePrerelease() Releases {
+	ret := make(Releases, 0, len(rs))
+
+	for _, r := range rs {
+		if r.Prerelease {
+			continue
+		}
+
+		ret = append(ret, r)
+	}
+	return ret
+}
+
 type NoAssetFoundErr struct {
 	OriginalName string
 }
