@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/IPA-CyberLab/latest/pkg/fetch/internal/apache"
 	ferrors "github.com/IPA-CyberLab/latest/pkg/fetch/internal/errors"
 	"github.com/IPA-CyberLab/latest/pkg/fetch/internal/github"
 	"github.com/IPA-CyberLab/latest/pkg/fetch/internal/goruntime"
@@ -18,6 +19,7 @@ import (
 var fetchImpls = []func(ctx context.Context, softwareId string) (releases.Releases, error){
 	hashicorp.Fetch,
 	goruntime.Fetch,
+	apache.Fetch,
 	github.Fetch,
 }
 

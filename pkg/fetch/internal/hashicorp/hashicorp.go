@@ -3,8 +3,6 @@ package hashicorp
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"regexp"
 	"sort"
 
@@ -20,26 +18,8 @@ const HandlerName = "hashicorp"
 const endpoint = "https://releases.hashicorp.com"
 
 func getHtml(ctx context.Context, productName string) ([]byte, error) {
-	hc := httpcli.HttpClient
-
 	url := fmt.Sprintf("%s/%s/", endpoint, productName)
-	req, err := http.NewRequestWithContext((ctx), "GET", url, nil)
-	if err != nil {
-		return nil, fmt.Errorf("Failed to construct http.Request: %w", err)
-	}
-
-	resp, err := hc.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("Failed to issue request to %s: %w", endpoint, err)
-	}
-	defer resp.Body.Close()
-
-	bs, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("Failed to read body of %s: %w", endpoint, err)
-	}
-
-	return bs, nil
+	return httpcli.Get(ctx, url)
 }
 
 var Products = map[string]struct{}{

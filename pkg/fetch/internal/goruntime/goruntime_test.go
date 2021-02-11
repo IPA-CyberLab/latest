@@ -5,10 +5,19 @@ import (
 
 	"github.com/blang/semver/v4"
 	"github.com/google/go-cmp/cmp"
+	"go.uber.org/zap"
 
 	"github.com/IPA-CyberLab/latest/pkg/fetch/internal/goruntime"
 	"github.com/IPA-CyberLab/latest/pkg/releases"
 )
+
+func init() {
+	l, err := zap.NewDevelopment()
+	if err != nil {
+		panic(err)
+	}
+	zap.ReplaceGlobals(l)
+}
 
 func TestMatch(t *testing.T) {
 	testcases := []struct {

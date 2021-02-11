@@ -5,23 +5,35 @@ import (
 	"log"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/blang/semver/v4"
 
 	"github.com/IPA-CyberLab/latest/pkg/query"
 )
 
-var reStripPrefix = regexp.MustCompile(`^[A-z_\-]*`)
+var reComponentAndVersion = regexp.MustCompile(`^([A-z_\-]+)(\d+\..*)$`)
 
-func ParseVersion(s string) (semver.Version, error) {
-	s = reStripPrefix.ReplaceAllString(s, "")
-
-	ver, err := semver.ParseTolerant(s)
-	if err != nil {
-		return semver.Version{}, nil
+func ParseComponentAndVersion(s string) (string, semver.Version, error) {
+	ms := reComponentAndVersion.FindStringSubmatch(s)
+	if len(ms) == 0 {
+		return "", semver.Version{}, fmt.Errorf("Failed to parse %q", s)
 	}
 
-	return ver, nil
+	component, verStr := ms[1], ms[2]
+	component = strings.TrimRight(component, "_-")
+
+	ver, err := semver.ParseTolerant(verStr)
+	if err != nil {
+		return "", semver.Version{}, fmt.Errorf("Failed to parse version %q", verStr)
+	}
+
+	return component, ver, nil
+}
+
+func ParseVersion(s string) (semver.Version, error) {
+	_, ver, err := ParseComponentAndVersion(s)
+	return ver, err
 }
 
 type queryIntermediate struct {
