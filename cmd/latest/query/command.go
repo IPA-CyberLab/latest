@@ -10,7 +10,6 @@ import (
 
 	"github.com/IPA-CyberLab/latest/pkg/fetch"
 	"github.com/IPA-CyberLab/latest/pkg/parser"
-	"github.com/IPA-CyberLab/latest/pkg/releases"
 )
 
 type AssetQueryType int
@@ -89,18 +88,18 @@ var Command = &cli.Command{
 			assetQ = AssetQueryGuess
 		}
 		switch assetQ {
-		case AssetQueryNone:
+		case AssetQueryNone, AssetQueryAll:
 			break
-		case AssetQueryAll:
-			if len(r.AssetURLs) == 0 {
-				return releases.NoAssetFoundErr{OriginalName: r.OriginalName}
-			}
 		case AssetQueryGuess:
-			pick, err := r.PickAsset()
-			if err != nil {
-				return err
+			if len(r.AssetURLs) > 0 {
+				var pick string
+				pick, err = r.PickAsset()
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "%v", err)
+				} else {
+					r.AssetURLs = []string{pick}
+				}
 			}
-			r.AssetURLs = []string{pick}
 		}
 
 		switch outputType {

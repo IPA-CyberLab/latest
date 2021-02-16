@@ -20,6 +20,7 @@ type Release struct {
 type Releases []Release
 
 var NotFoundErr = errors.New("No matching Release found.")
+var AssetNotFoundErr = errors.New("No matching asset found.")
 
 func (rs Releases) SelectAll(vrange semver.Range) Releases {
 	selected := make(Releases, 0)
@@ -59,14 +60,6 @@ func (rs Releases) RemovePrerelease() Releases {
 	return ret
 }
 
-type NoAssetFoundErr struct {
-	OriginalName string
-}
-
-func (e NoAssetFoundErr) Error() string {
-	return fmt.Sprintf("Unknown asset query arg: %q", e.OriginalName)
-}
-
 func filterIfMatches(ss []string, needle string) []string {
 	zap.S().Debugf("asset filter %q", needle)
 
@@ -100,7 +93,7 @@ var archAlias = map[string]string{
 
 func (r Release) PickAsset() (string, error) {
 	if len(r.AssetURLs) == 0 {
-		return "", NoAssetFoundErr{r.OriginalName}
+		return "", AssetNotFoundErr
 	}
 
 	filters := []string{
