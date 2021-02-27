@@ -16,6 +16,7 @@ func TestParseComponentAndVersion(t *testing.T) {
 		{"apache-wicket-8.11.0", "apache-wicket", "8.11.0"},
 		{"go1.15", "go", "1.15"},
 		{"SparkR_3.0.1", "SparkR", "3.0.1"},
+		{"352", "", "352"},
 	}
 
 	for _, tc := range tcs {
@@ -74,6 +75,11 @@ func TestParse(t *testing.T) {
 		{"github.com/foo/bar@v4:prerelease", queryIntermediate{
 			SoftwareId:  "github.com/foo/bar",
 			VerRangeStr: ">=4.0.0 <5.0.0 ",
+			Prerelease:  true,
+		}},
+		{"m2:io.trino:trino-server:prerelease", queryIntermediate{
+			SoftwareId:  "m2:io.trino:trino-server",
+			VerRangeStr: "",
 			Prerelease:  true,
 		}},
 	}

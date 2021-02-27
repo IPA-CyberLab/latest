@@ -12,7 +12,7 @@ import (
 	"github.com/IPA-CyberLab/latest/pkg/query"
 )
 
-var reComponentAndVersion = regexp.MustCompile(`^([A-z_\-]+)(\d+\..*)$`)
+var reComponentAndVersion = regexp.MustCompile(`^([A-z_\-]*)(\d+(\..*)?)$`)
 
 func ParseComponentAndVersion(s string) (string, semver.Version, error) {
 	ms := reComponentAndVersion.FindStringSubmatch(s)
@@ -42,10 +42,10 @@ type queryIntermediate struct {
 	Prerelease  bool
 }
 
-var reSoftwareIdAndRest = regexp.MustCompile(`^([^:@<>=]*)(.*)$`)
+var reSoftwareIdAndRest = regexp.MustCompile(`^([^@<>=:]*)(.*)$`)
 var reAtVersion = regexp.MustCompile(`^@v?(\d+)(\.(\d+))?(\.(\d+))?(.*)$`)
 var reRangeVersion = regexp.MustCompile(`^([<>]=?[\d\.]+)(.*)$`)
-var reFlag = regexp.MustCompile(`^:(\w+)(.*)$`)
+var reFlag = regexp.MustCompile(`^:([^@<>=:]*)(.*)$`)
 
 func parseInternal(s string) (*queryIntermediate, error) {
 	ms := reSoftwareIdAndRest.FindStringSubmatch(s)
@@ -97,13 +97,12 @@ func parseInternal(s string) (*queryIntermediate, error) {
 		ms = reFlag.FindStringSubmatch(attrstr)
 		if len(ms) != 0 {
 			flag := ms[1]
-			log.Printf("flag: %q", flag)
 
 			switch flag {
 			case "prerelease":
 				qi.Prerelease = true
 			default:
-				return nil, fmt.Errorf("Unknown flag attribute: %q", flag)
+				qi.SoftwareId = fmt.Sprintf("%s:%s", qi.SoftwareId, flag)
 			}
 
 			attrstr = ms[2]

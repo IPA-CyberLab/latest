@@ -10,6 +10,7 @@ import (
 	"github.com/IPA-CyberLab/latest/pkg/fetch/internal/github"
 	"github.com/IPA-CyberLab/latest/pkg/fetch/internal/goruntime"
 	"github.com/IPA-CyberLab/latest/pkg/fetch/internal/hashicorp"
+	"github.com/IPA-CyberLab/latest/pkg/fetch/internal/maven"
 	"github.com/IPA-CyberLab/latest/pkg/releases"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -20,6 +21,7 @@ var fetchImpls = []func(ctx context.Context, softwareId string) (releases.Releas
 	hashicorp.Fetch,
 	goruntime.Fetch,
 	apache.Fetch,
+	maven.Fetch,
 	github.Fetch,
 }
 
