@@ -41,6 +41,11 @@ var Command = &cli.Command{
 			Usage: "Output format. `FORMAT` can be \"line\" or \"json\".",
 			Value: "line",
 		},
+		&cli.StringSliceFlag{
+			Name:    "assetFilter",
+			Aliases: []string{"f"},
+			Usage:   "Apply filter to list of asset URLs.",
+		},
 	},
 	Action: func(c *cli.Context) error {
 		assetQ := AssetQueryNone
@@ -84,6 +89,11 @@ var Command = &cli.Command{
 		}
 		r := rs[0]
 
+		filters := c.StringSlice("assetFilter")
+		for _, f := range filters {
+			r.FilterAssets(f)
+		}
+
 		if assetQ == AssetQueryNone && outputType != OutputTypeLine {
 			assetQ = AssetQueryGuess
 		}
@@ -91,14 +101,9 @@ var Command = &cli.Command{
 		case AssetQueryNone, AssetQueryAll:
 			break
 		case AssetQueryGuess:
+			r.PickAsset()
 			if len(r.AssetURLs) > 0 {
-				var pick string
-				pick, err = r.PickAsset()
-				if err != nil {
-					fmt.Fprintf(os.Stderr, "%v", err)
-				} else {
-					r.AssetURLs = []string{pick}
-				}
+				fmt.Fprintf(os.Stderr, "Too many matches: %v", r.AssetURLs)
 			}
 		}
 

@@ -2,7 +2,6 @@ package releases
 
 import (
 	"errors"
-	"fmt"
 	"runtime"
 	"strings"
 
@@ -60,7 +59,7 @@ func (rs Releases) RemovePrerelease() Releases {
 	return ret
 }
 
-func filterIfMatches(ss []string, needle string) []string {
+func filter(ss []string, needle string) []string {
 	zap.S().Debugf("asset filter %q", needle)
 
 	var invert bool
@@ -79,6 +78,15 @@ func filterIfMatches(ss []string, needle string) []string {
 			filtered = append(filtered, s)
 		}
 	}
+	return filtered
+}
+
+func (r *Release) FilterAssets(needle string) {
+	r.AssetURLs = filter(r.AssetURLs, needle)
+}
+
+func filterIfMatches(ss []string, needle string) []string {
+	filtered := filter(ss, needle)
 
 	if len(filtered) > 0 {
 		return filtered
@@ -91,15 +99,12 @@ var archAlias = map[string]string{
 	"amd64": "x86_64",
 }
 
-func (r Release) PickAsset() (string, error) {
-	if len(r.AssetURLs) == 0 {
-		return "", AssetNotFoundErr
-	}
-
+func (r *Release) PickAsset() {
 	filters := []string{
 		"!.txt",
 		"!.sha256sum",
 		"!.asc",
+		"!.log",
 		runtime.GOOS,
 		runtime.GOARCH,
 	}
@@ -107,12 +112,7 @@ func (r Release) PickAsset() (string, error) {
 		filters = append(filters, alias)
 	}
 
-	filtered := r.AssetURLs
 	for _, f := range filters {
-		filtered = filterIfMatches(filtered, f)
+		r.AssetURLs = filterIfMatches(r.AssetURLs, f)
 	}
-	if len(filtered) != 1 {
-		return "", fmt.Errorf("Too many matches: %v", filtered)
-	}
-	return filtered[0], nil
 }
