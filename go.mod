@@ -6,7 +6,7 @@ require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/go-cmp v0.5.5
+	github.com/google/go-cmp v0.5.6
 	github.com/prometheus/client_golang v1.10.0
 	github.com/prometheus/common v0.25.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
