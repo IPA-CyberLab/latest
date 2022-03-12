@@ -102,7 +102,10 @@ var Command = &cli.Command{
 			break
 		case AssetQueryGuess:
 			r.PickAsset()
-			if len(r.AssetURLs) > 0 {
+			if len(r.AssetURLs) == 0 {
+				return fmt.Errorf("Failed to find asset.")
+			}
+			if len(r.AssetURLs) > 1 {
 				fmt.Fprintf(os.Stderr, "Too many matches: %v", r.AssetURLs)
 			}
 		}
