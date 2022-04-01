@@ -57,7 +57,7 @@ func getJson(ctx context.Context) ([]byte, error) {
 	return bs, nil
 }
 
-var reGoSoftwareId = regexp.MustCompile(`[Gg]o(lang)?`)
+var reGoSoftwareId = regexp.MustCompile(`^[Gg]o(lang)?$`)
 
 func Match(softwareId string) bool {
 	return reGoSoftwareId.MatchString(softwareId)

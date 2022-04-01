@@ -28,6 +28,7 @@ func TestMatch(t *testing.T) {
 		{"Go", true},
 		{"golang", true},
 		{"Golang", true},
+		{"github.com/google/ko", false},
 		{"Scala", false},
 	}
 
