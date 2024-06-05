@@ -34,7 +34,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_TOKEN }}
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
           args: release -f .goreleaser.edge.yml --rm-dist
@@ -61,7 +61,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_TOKEN }}
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
           args: release --rm-dist
