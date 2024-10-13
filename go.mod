@@ -7,7 +7,7 @@ require (
 	github.com/google/go-cmp v0.5.6
 	github.com/prometheus/client_golang v1.12.1
 	github.com/prometheus/common v0.33.0 // indirect
-	github.com/urfave/cli/v2 v2.4.0
+	github.com/urfave/cli/v2 v2.27.5
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.21.0
